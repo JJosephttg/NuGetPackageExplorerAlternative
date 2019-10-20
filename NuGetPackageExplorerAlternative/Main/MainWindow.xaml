@@ -14,6 +14,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="55"/>
             <RowDefinition/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         
         <!--Search-->
@@ -117,5 +118,29 @@
                 <ContentControl Content="{Binding SelectedPackage}"/>
             </ScrollViewer>
         </Border>
+        
+        <!--Error-->
+        <TextBlock 
+            Grid.Row="2" 
+            Grid.ColumnSpan="3" 
+            Margin="-10,0,-10,0"
+            Padding="5"
+            Background="Beige"
+            MaxHeight="30"
+            Text="{Binding ErrorMessage}" 
+            Foreground="Black" 
+            VerticalAlignment="Center" 
+            TextWrapping="Wrap"
+            TextTrimming="CharacterEllipsis">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ErrorMessage}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
     </Grid>
 </Window>

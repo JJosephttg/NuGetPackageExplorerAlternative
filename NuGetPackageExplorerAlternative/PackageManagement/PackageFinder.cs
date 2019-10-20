@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
+using System;
+using System.Net.Http;
 
 namespace NuGetPackageExplorerAlternative {
     public class PackageFinder {
@@ -13,22 +15,35 @@ namespace NuGetPackageExplorerAlternative {
 
         string _uri;
         int _startIndex = 0;
-        public void InitializeQuerySource(string uri) {
+        PackageSearchResource _searchResource;
+        SearchFilter _searchFilter = new SearchFilter(true);
+        public PackageFinder(string uri) {
             _uri = uri;
             _startIndex = 0;
             HasMoreData = true;
         }
 
-        public async Task<List<PackageItem>> LoadNextPackageSet() {
+        public async Task<List<PackageItem>> LoadNextPackageSet(CancellationToken token) {
             var list = new List<PackageItem>();
             if (string.IsNullOrWhiteSpace(_uri)) return list;
 
-            PackageSource packageSource = new PackageSource(_uri);
-            SourceRepository sourceRepo = new SourceRepository(packageSource, Repository.Provider.GetCoreV3());
-            PackageSearchResource searchResource = await sourceRepo.GetResourceAsync<PackageSearchResource>();
+            IPackageSearchMetadata[] data;
+            try {
+                if (_searchResource == null) {
+                    PackageSource packageSource = new PackageSource(_uri);
+                    SourceRepository sourceRepo = new SourceRepository(packageSource, Repository.Provider.GetCoreV3());
+                    _searchResource = await sourceRepo.GetResourceAsync<PackageSearchResource>(token);
+                }
 
-            IPackageSearchMetadata[] data = (await searchResource.SearchAsync(null, new SearchFilter(true), _startIndex, C_QuerySize, NullLogger.Instance, CancellationToken.None)).ToArray();
+                data = (await _searchResource.SearchAsync(null, _searchFilter, _startIndex, C_QuerySize, NullLogger.Instance, token)).ToArray();
+
+                token.ThrowIfCancellationRequested();
+            } catch (TaskCanceledException) {
+                return list;
+            }
+
             foreach (var item in data) list.Add(new PackageItem(item, item.Identity.Version.ToString()));
+
             HasMoreData = data.Length == C_QuerySize;
             _startIndex += C_QuerySize;
             return list;

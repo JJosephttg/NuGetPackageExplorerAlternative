@@ -1,39 +1,32 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace NuGetPackageExplorerAlternative {
     public class MainWindowViewModel : ViewModelBase {
         PackageFinder _packageFinder;
-        string _sourceUri = "";
 
         public MainWindowViewModel() {
-            _packageFinder = new PackageFinder();
-
             ChangeSourceCommand = new CustomCommand(async (source) => {
                 NuGetPackageResults.Clear();
-                IsEditable = false;
 
-                var sourceUri = source as string;
-                _sourceUri = sourceUri;
+                _packageFinder = new PackageFinder(source as string);
 
-                _packageFinder.InitializeQuerySource(sourceUri);
-
-                var data = await _packageFinder.LoadNextPackageSet();
-                foreach (var item in data) NuGetPackageResults.Add(item);
-
-                OnPropertyChanged("NuGetPackageResults");
-                IsEditable = true;
+                await LoadNextPackageChunk();
             });
 
             LoadNextPackageSet = new CustomCommand(
-                (p) => _packageFinder.HasMoreData,
-                async (p) => {
-                    IsEditable = false;
+                (p) => _packageFinder.HasMoreData && IsEditable,
+                async (p) => { await LoadNextPackageChunk(); }
+            );
 
-                    var data = await _packageFinder.LoadNextPackageSet();
-                    foreach (var item in data) NuGetPackageResults.Add(item);
-
-                    OnPropertyChanged("NuGetPackageResults");
+            CancelCommand = new CustomCommand(
+                (p) => !IsEditable && CurrentCancellationToken != null,
+                (p) => {
+                    CurrentCancellationToken.Cancel();
                     IsEditable = true;
                 }
             );
@@ -41,6 +34,7 @@ namespace NuGetPackageExplorerAlternative {
 
         public ICommand ChangeSourceCommand { get; }
         public ICommand LoadNextPackageSet { get; }
+        public ICommand CancelCommand { get; }
         public string[] Sources { get; } = new string[] { "https://api.nuget.org/v3/index.json", "http://PromessPackageServer/MicroSoft/nuget" };
         public ObservableCollection<object> NuGetPackageResults { get; private set; } = new ObservableCollection<object>();
 
@@ -57,6 +51,47 @@ namespace NuGetPackageExplorerAlternative {
                     OnPropertyChanged("NuGetPackageResults");
                 }
             }
+        }
+
+        string _error;
+        public string ErrorMessage {
+            get { return _error; }
+            private set {
+                _error = value;
+                OnPropertyChanged("ErrorMessage");
+            }
+        }
+
+        CancellationTokenSource _currentCancellationToken;
+        CancellationTokenSource CurrentCancellationToken {
+            get { return _currentCancellationToken; }
+            set {
+                if(_currentCancellationToken != null)
+                    _currentCancellationToken.Cancel();
+                _currentCancellationToken = value;
+            }
+        }
+
+        private async Task LoadNextPackageChunk() {
+            ErrorMessage = null;
+            IsEditable = false;
+
+            var tokenSource = new CancellationTokenSource();
+            CurrentCancellationToken = tokenSource;
+
+            List<PackageItem> data = new List<PackageItem>();
+            try {
+                data = await _packageFinder.LoadNextPackageSet(tokenSource.Token);
+            } catch (Exception e) {
+                ErrorMessage = e.Message;
+            }
+
+            foreach (var item in data) NuGetPackageResults.Add(item);
+
+            OnPropertyChanged("NuGetPackageResults");
+            if (CurrentCancellationToken == tokenSource) CurrentCancellationToken = null;
+            tokenSource.Dispose();
+            IsEditable = true;
         }
     }
 }

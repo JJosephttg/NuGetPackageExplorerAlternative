@@ -35,7 +35,7 @@
         <!--Package Source-->
         <DockPanel Grid.Column="1" VerticalAlignment="Center">
             <TextBlock VerticalAlignment="Center" Margin="5,0,8,0">Package Source:</TextBlock>
-            <ComboBox x:Name="SourceComboBox" SelectedIndex="0" ItemsSource="{Binding Sources}" Height="25" IsEditable="True" VerticalAlignment="Center">
+            <ComboBox IsEnabled="{Binding IsEditable}" x:Name="SourceComboBox" SelectedIndex="0" ItemsSource="{Binding Sources}" Height="25" IsEditable="True" VerticalAlignment="Center">
                 <ComboBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding ChangeSourceCommand}" CommandParameter="{Binding Text, ElementName=SourceComboBox}" />
                 </ComboBox.InputBindings>
@@ -45,14 +45,21 @@
         
         <!--Package Listing-->
         <ListBox HorizontalContentAlignment="Stretch" BorderBrush="LightGray" Grid.Row="1" ItemsSource="{Binding NuGetPackageResults}" 
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False"
+                 ScrollViewer.ScrollChanged="ListBox_ScrollChanged">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Padding" Value="10"/>
                 </Style>
             </ListBox.ItemContainerStyle>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
+            <ListBox.Resources>
+                <DataTemplate DataType="{x:Type local:MainWindowViewModel}">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical" d:IsHidden="False">
+                        <TextBlock>Loading Packages...</TextBlock>
+                        <Button Content="_Cancel" Margin="0,10,0,0" Padding="15,2" HorizontalAlignment="Center" Command="{Binding CancelCommand}" />
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:PackageItem}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="45"/>
@@ -101,7 +108,7 @@
                                    TextWrapping="Wrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Stretch" MaxHeight="40" />
                     </Grid>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
+            </ListBox.Resources>
         </ListBox>
 
         <!--Package Info-->

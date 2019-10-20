@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
-using System;
-using System.Net.Http;
 
 namespace NuGetPackageExplorerAlternative {
     public class PackageFinder {
@@ -36,7 +34,7 @@ namespace NuGetPackageExplorerAlternative {
                 }
 
                 data = (await _searchResource.SearchAsync(null, _searchFilter, _startIndex, C_QuerySize, NullLogger.Instance, token)).ToArray();
-
+                
                 token.ThrowIfCancellationRequested();
             } catch (TaskCanceledException) {
                 return list;

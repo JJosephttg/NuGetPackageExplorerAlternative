@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace NuGetPackageExplorerAlternative
 {
@@ -24,6 +26,11 @@ namespace NuGetPackageExplorerAlternative
             else if (e.ExtentHeight > 0 && e.ExtentHeight < e.ViewportHeight) // load more packages if viewport is higher than used space
                 if (_vm.LoadNextPackageSet.CanExecute(null))
                     _vm.LoadNextPackageSet.Execute(null);
+        }
+
+        private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e) {
+            Process.Start(new ProcessStartInfo(e.Uri.ToString()));
+            e.Handled = true;
         }
     }
 }

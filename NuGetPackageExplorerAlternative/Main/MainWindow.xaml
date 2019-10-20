@@ -47,7 +47,7 @@
         <!--Package Listing-->
         <ListBox HorizontalContentAlignment="Stretch" BorderBrush="LightGray" Grid.Row="1" ItemsSource="{Binding NuGetPackageResults}" 
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False"
-                 ScrollViewer.ScrollChanged="ListBox_ScrollChanged">
+                 ScrollViewer.ScrollChanged="ListBox_ScrollChanged" SelectedItem="{Binding SelectedPackage}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Padding" Value="10"/>
@@ -77,7 +77,7 @@
                                VerticalAlignment="Top" HorizontalAlignment="Left"/>
 
                         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <TextBlock Text="{Binding Metadata.Title}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Metadata.Identity.Id}" FontWeight="Bold"/>
                             <TextBlock HorizontalAlignment="Stretch" Margin="4,0,0,0">
                                 by
                                 <Run Text="{Binding Metadata.Authors}"/>
@@ -100,7 +100,7 @@
                             </Label.Style>
                             <Label.Content>
                                 <TextBlock>
-                                    v<Run Text="{Binding Version, Mode=OneWay}"/>
+                                    v<Run Text="{Binding Metadata.Identity.Version, Mode=OneWay}"/>
                                 </TextBlock>
                             </Label.Content>
                         </Label>
@@ -114,8 +114,75 @@
 
         <!--Package Info-->
         <Border Grid.Row="1" Grid.Column="1" BorderBrush="LightGray" BorderThickness="1,1,1,1">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <ContentControl Content="{Binding SelectedPackage}"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="10,10,10,0">
+                <ContentControl Content="{Binding SelectedPackage}">
+                    <ContentControl.Resources>
+                        <DataTemplate DataType="{x:Type local:PackageItem}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding Metadata.IconUrl}" Width="35" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    <TextBlock TextWrapping="Wrap" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Metadata.Identity.Id}" FontSize="18"/>
+                                </StackPanel>
+                                
+                                <TextBlock Margin="0,15,0,5" FontWeight="Bold">Description</TextBlock>
+                                <TextBlock Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding Metadata.Description}"/>
+
+                                <Grid Margin="-5,0">
+                                    <Grid.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="5"/>
+                                            <Setter Property="VerticalAlignment" Value="Top"/>
+                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                        </Style>
+                                    </Grid.Resources>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock FontWeight="Bold">Version:</TextBlock>
+                                    <TextBlock Grid.Column="1" Text="{Binding Version}"/>
+
+                                    <TextBlock Grid.Row="1" FontWeight="Bold">Author(s):</TextBlock>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Metadata.Authors}"/>
+
+                                    <TextBlock Grid.Row="2" FontWeight="Bold">License:</TextBlock>
+                                    <TextBlock Grid.Row="2" Grid.Column="1">
+                                        <Hyperlink NavigateUri="{Binding Metadata.LicenseUrl}" RequestNavigate="Hyperlink_OnRequestNavigate">
+                                            <Run Text="{Binding Metadata.LicenseUrl}"/>
+                                        </Hyperlink>
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="3" FontWeight="Bold">Project URL:</TextBlock>
+                                    <TextBlock Grid.Row="3" Grid.Column="1">
+                                        <Hyperlink NavigateUri="{Binding Metadata.ProjectUrl}" RequestNavigate="Hyperlink_OnRequestNavigate">
+                                            <Run Text="{Binding Metadata.ProjectUrl}"/>
+                                        </Hyperlink>
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="4" FontWeight="Bold">Report Abuse:</TextBlock>
+                                    <TextBlock Grid.Row="4" Grid.Column="1">
+                                        <Hyperlink NavigateUri="{Binding Metadata.ReportAbuseUrl}" RequestNavigate="Hyperlink_OnRequestNavigate">
+                                            <Run Text="{Binding Metadata.ReportAbuseUrl}"/>
+                                        </Hyperlink>
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="5" FontWeight="Bold">Tags:</TextBlock>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Metadata.Tags}"/>
+
+                                </Grid>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ContentControl.Resources>
+                </ContentControl>
             </ScrollViewer>
         </Border>
         

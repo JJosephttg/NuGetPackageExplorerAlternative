@@ -16,6 +16,7 @@ namespace NuGetPackageExplorerAlternative {
                 _packageFinder = new PackageFinder(source as string);
 
                 await LoadNextPackageChunk();
+                SelectedPackage = NuGetPackageResults.Count > 0 ? NuGetPackageResults[0] as PackageItem : null;
             });
 
             LoadNextPackageSet = new CustomCommand(
@@ -30,13 +31,15 @@ namespace NuGetPackageExplorerAlternative {
                     IsEditable = true;
                 }
             );
+
+            ChangeSourceCommand.Execute(Sources[1]);
         }
 
         public ICommand ChangeSourceCommand { get; }
         public ICommand LoadNextPackageSet { get; }
         public ICommand CancelCommand { get; }
         public string[] Sources { get; } = new string[] { "https://api.nuget.org/v3/index.json", "http://PromessPackageServer/MicroSoft/nuget" };
-        public ObservableCollection<object> NuGetPackageResults { get; private set; } = new ObservableCollection<object>();
+        public ObservableCollection<object> NuGetPackageResults { get; } = new ObservableCollection<object>();
 
         bool _isEditable = true;
         public bool IsEditable {
@@ -59,6 +62,18 @@ namespace NuGetPackageExplorerAlternative {
             private set {
                 _error = value;
                 OnPropertyChanged("ErrorMessage");
+            }
+        }
+
+
+        PackageItem _selectedPackage;
+        public PackageItem SelectedPackage {
+            get { return _selectedPackage; }
+            set {
+                if(_selectedPackage != value) {
+                    _selectedPackage = value;
+                    OnPropertyChanged("SelectedPackage");
+                }
             }
         }
 

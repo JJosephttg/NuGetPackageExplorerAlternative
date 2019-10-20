@@ -2,8 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:NuGetPackageExplorerAlternative"
-             StartupUri="./Main/MainWindow.xaml">
+             Startup="AppStart">
     <Application.Resources>
-         
+        <ResourceDictionary Source="ViewModelAssociations.xaml"/>
     </Application.Resources>
 </Application>

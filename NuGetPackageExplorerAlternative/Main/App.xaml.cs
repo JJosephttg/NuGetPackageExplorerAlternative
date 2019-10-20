@@ -13,5 +13,12 @@ namespace NuGetPackageExplorerAlternative
     /// </summary>
     public partial class App : Application
     {
+        public void AppStart(object sender, EventArgs e) {
+            MainWindow window = new MainWindow();
+            window.DataContext = new MainWindowViewModel();
+            
+            App.Current.MainWindow = window;
+            window.Show();
+        }
     }
 }

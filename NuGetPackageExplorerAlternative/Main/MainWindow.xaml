@@ -5,8 +5,110 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NuGetPackageExplorerAlternative"
         mc:Ignorable="d"
-        Title="Super Reliable NuGet Package Explorer That I Won't Allow To Break" MinHeight="300" MinWidth="600" Height="450" Width="800">
-    <Grid>
+        Title="Super Reliable NuGet Package Explorer That I Won't Allow To Break" MinHeight="600" MinWidth="1050" Height="600" Width="1050">
+    <Grid Margin="10,7">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         
+        <!--Search-->
+        <!--<Grid>
+            <TextBox Padding="5,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" Height="28" Name="searchTextBox" Width="300"/>
+            <TextBlock IsHitTestVisible="False" VerticalAlignment="Center" Margin="10,1,0,0" Foreground="DarkGray">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=searchTextBox, Path=Text.IsEmpty}" Value="True">
+                                <Setter Property="Text" Value="Search"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>-->
+        
+        <!--Package Source-->
+        <DockPanel Grid.Column="1" VerticalAlignment="Center">
+            <TextBlock VerticalAlignment="Center" Margin="5,0,8,0">Package Source:</TextBlock>
+            <ComboBox x:Name="SourceComboBox" SelectedIndex="0" ItemsSource="{Binding Sources}" Height="25" IsEditable="True" VerticalAlignment="Center">
+                <ComboBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding ChangeSourceCommand}" CommandParameter="{Binding Text, ElementName=SourceComboBox}" />
+                </ComboBox.InputBindings>
+            </ComboBox>
+        </DockPanel>
+        
+        
+        <!--Package Listing-->
+        <ListBox HorizontalContentAlignment="Stretch" BorderBrush="LightGray" Grid.Row="1" ItemsSource="{Binding NuGetPackageResults}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="10"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="45"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Image Grid.Column="0" Grid.RowSpan="2" RenderOptions.BitmapScalingMode="HighQuality" 
+                               Source="{Binding Metadata.IconUrl}" Width="35"
+                               VerticalAlignment="Top" HorizontalAlignment="Left"/>
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <TextBlock Text="{Binding Metadata.Title}" FontWeight="Bold"/>
+                            <TextBlock HorizontalAlignment="Stretch" Margin="4,0,0,0">
+                                by
+                                <Run Text="{Binding Metadata.Authors}"/>
+                                <TextBlock>,</TextBlock>
+                                <Run Text="{Binding Metadata.DownloadCount}" FontWeight="Bold"/>
+                                <TextBlock>downloads</TextBlock>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Label Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Top" Padding="0">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Metadata.IsPrerelease}" Value="True">
+                                            <Setter Property="Foreground" Value="Maroon" />
+                                            <Setter Property="FontStyle" Value="Italic" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                            <Label.Content>
+                                <TextBlock>
+                                    v<Run Text="{Binding Version, Mode=OneWay}"/>
+                                </TextBlock>
+                            </Label.Content>
+                        </Label>
+
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Metadata.Summary}"
+                                   TextWrapping="Wrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Stretch" MaxHeight="40" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!--Package Info-->
+        <Border Grid.Row="1" Grid.Column="1" BorderBrush="LightGray" BorderThickness="1,1,1,1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ContentControl Content="{Binding SelectedPackage}"/>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </Window>

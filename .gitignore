@@ -1,3 +1,4 @@
-.vs/*
-NuGetPackageExplorerAlternative/bin/*
-NuGetPackageExplorerAlternative/obj/*
+.vs
+NuGetPackageExplorerAlternative/bin
+NuGetPackageExplorerAlternative/obj
+packages

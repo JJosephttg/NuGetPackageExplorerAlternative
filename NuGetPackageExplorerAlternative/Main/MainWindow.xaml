@@ -36,7 +36,7 @@
         <!--Package Source-->
         <DockPanel Grid.Column="1" VerticalAlignment="Center">
             <TextBlock VerticalAlignment="Center" Margin="5,0,8,0">Package Source:</TextBlock>
-            <ComboBox IsEnabled="{Binding IsEditable}" x:Name="SourceComboBox" SelectedIndex="0" ItemsSource="{Binding Sources}" Height="25" IsEditable="True" VerticalAlignment="Center">
+            <ComboBox IsEnabled="{Binding IsEditable}" SelectedIndex="1" x:Name="SourceComboBox" ItemsSource="{Binding Sources}" Height="25" IsEditable="True" VerticalAlignment="Center">
                 <ComboBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding ChangeSourceCommand}" CommandParameter="{Binding Text, ElementName=SourceComboBox}" />
                 </ComboBox.InputBindings>
@@ -73,16 +73,16 @@
                         </Grid.RowDefinitions>
 
                         <Image Grid.Column="0" Grid.RowSpan="2" RenderOptions.BitmapScalingMode="HighQuality" 
-                               Source="{Binding Metadata.IconUrl}" Width="35"
+                               Source="{Binding IconUrl, Mode=OneWay}" Width="35"
                                VerticalAlignment="Top" HorizontalAlignment="Left"/>
 
                         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <TextBlock Text="{Binding Metadata.Identity.Id}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Id, Mode=OneWay}" FontWeight="Bold"/>
                             <TextBlock HorizontalAlignment="Stretch" Margin="4,0,0,0">
                                 by
-                                <Run Text="{Binding Metadata.Authors}"/>
+                                <Run Text="{Binding Authors, Mode=OneWay}"/>
                                 <TextBlock>,</TextBlock>
-                                <Run Text="{Binding Metadata.DownloadCount}" FontWeight="Bold"/>
+                                <Run Text="{Binding DownloadCount, Mode=OneWay}" FontWeight="Bold"/>
                                 <TextBlock>downloads</TextBlock>
                             </TextBlock>
                         </StackPanel>
@@ -91,7 +91,7 @@
                             <Label.Style>
                                 <Style TargetType="Label">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Metadata.IsPrerelease}" Value="True">
+                                        <DataTrigger Binding="{Binding IsPrerelease, Mode=OneWay}" Value="True">
                                             <Setter Property="Foreground" Value="Maroon" />
                                             <Setter Property="FontStyle" Value="Italic" />
                                         </DataTrigger>
@@ -100,12 +100,12 @@
                             </Label.Style>
                             <Label.Content>
                                 <TextBlock>
-                                    v<Run Text="{Binding Metadata.Identity.Version, Mode=OneWay}"/>
+                                    v<Run Text="{Binding Version, Mode=OneWay}"/>
                                 </TextBlock>
                             </Label.Content>
                         </Label>
 
-                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Metadata.Summary}"
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Summary, Mode=OneWay}"
                                    TextWrapping="Wrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Stretch" MaxHeight="40" />
                     </Grid>
                 </DataTemplate>
@@ -120,12 +120,12 @@
                         <DataTemplate DataType="{x:Type local:PackageItem}">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding Metadata.IconUrl}" Width="35" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                    <TextBlock TextWrapping="Wrap" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Metadata.Identity.Id}" FontSize="18"/>
+                                    <Image Source="{Binding IconUrl, Mode=OneWay}" Width="35" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    <TextBlock TextWrapping="Wrap" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Id, Mode=OneWay}" FontSize="18"/>
                                 </StackPanel>
                                 
                                 <TextBlock Margin="0,15,0,5" FontWeight="Bold">Description</TextBlock>
-                                <TextBlock Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding Metadata.Description}"/>
+                                <TextBlock Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding Description, Mode=OneWay}"/>
 
                                 <Grid Margin="-5,0">
                                     <Grid.Resources>
@@ -149,34 +149,34 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock FontWeight="Bold">Version:</TextBlock>
-                                    <TextBlock Grid.Column="1" Text="{Binding Version}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Version, Mode=OneWay}"/>
 
                                     <TextBlock Grid.Row="1" FontWeight="Bold">Author(s):</TextBlock>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Metadata.Authors}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Authors, Mode=OneWay}"/>
 
                                     <TextBlock Grid.Row="2" FontWeight="Bold">License:</TextBlock>
                                     <TextBlock Grid.Row="2" Grid.Column="1">
-                                        <Hyperlink NavigateUri="{Binding Metadata.LicenseUrl}" RequestNavigate="Hyperlink_OnRequestNavigate">
-                                            <Run Text="{Binding Metadata.LicenseUrl}"/>
+                                        <Hyperlink NavigateUri="{Binding LicenseUrl, Mode=OneWay}" RequestNavigate="Hyperlink_OnRequestNavigate">
+                                            <Run Text="{Binding LicenseUrl, Mode=OneWay}"/>
                                         </Hyperlink>
                                     </TextBlock>
 
                                     <TextBlock Grid.Row="3" FontWeight="Bold">Project URL:</TextBlock>
                                     <TextBlock Grid.Row="3" Grid.Column="1">
-                                        <Hyperlink NavigateUri="{Binding Metadata.ProjectUrl}" RequestNavigate="Hyperlink_OnRequestNavigate">
-                                            <Run Text="{Binding Metadata.ProjectUrl}"/>
+                                        <Hyperlink NavigateUri="{Binding ProjectUrl, Mode=OneWay}" RequestNavigate="Hyperlink_OnRequestNavigate">
+                                            <Run Text="{Binding ProjectUrl, Mode=OneWay}"/>
                                         </Hyperlink>
                                     </TextBlock>
 
                                     <TextBlock Grid.Row="4" FontWeight="Bold">Report Abuse:</TextBlock>
                                     <TextBlock Grid.Row="4" Grid.Column="1">
-                                        <Hyperlink NavigateUri="{Binding Metadata.ReportAbuseUrl}" RequestNavigate="Hyperlink_OnRequestNavigate">
-                                            <Run Text="{Binding Metadata.ReportAbuseUrl}"/>
+                                        <Hyperlink NavigateUri="{Binding ReportAbuseUrl, Mode=OneWay}" RequestNavigate="Hyperlink_OnRequestNavigate">
+                                            <Run Text="{Binding ReportAbuseUrl, Mode=OneWay}"/>
                                         </Hyperlink>
                                     </TextBlock>
 
                                     <TextBlock Grid.Row="5" FontWeight="Bold">Tags:</TextBlock>
-                                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Metadata.Tags}"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Tags, Mode=OneWay}"/>
 
                                 </Grid>
                             </StackPanel>

@@ -40,7 +40,7 @@ namespace NuGetPackageExplorerAlternative {
                 return list;
             }
 
-            foreach (var item in data) list.Add(new PackageItem(item, item.Identity.Version.ToString()));
+            foreach (var item in data) list.Add(new PackageItem(item));
 
             HasMoreData = data.Length == C_QuerySize;
             _startIndex += C_QuerySize;

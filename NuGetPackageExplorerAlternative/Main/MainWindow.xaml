@@ -73,7 +73,7 @@
                         </Grid.RowDefinitions>
 
                         <Image Grid.Column="0" Grid.RowSpan="2" RenderOptions.BitmapScalingMode="HighQuality" 
-                               Source="{Binding IconUrl, Mode=OneWay}" Width="35"
+                               Source="{Binding Icon, Mode=OneWay}" Width="35"
                                VerticalAlignment="Top" HorizontalAlignment="Left"/>
 
                         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top">
@@ -120,7 +120,7 @@
                         <DataTemplate DataType="{x:Type local:PackageItem}">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding IconUrl, Mode=OneWay}" Width="35" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    <Image Source="{Binding Icon, Mode=OneWay}" Width="35" RenderOptions.BitmapScalingMode="HighQuality"/>
                                     <TextBlock TextWrapping="Wrap" VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Id, Mode=OneWay}" FontSize="18"/>
                                 </StackPanel>
                                 
@@ -177,7 +177,6 @@
 
                                     <TextBlock Grid.Row="5" FontWeight="Bold">Tags:</TextBlock>
                                     <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Tags, Mode=OneWay}"/>
-
                                 </Grid>
                             </StackPanel>
                         </DataTemplate>
